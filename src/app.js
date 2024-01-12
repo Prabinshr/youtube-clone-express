@@ -25,4 +25,13 @@ app.use(
 app.use(express.static("public"));
 app.use(cookieParser());
 
+// import router
+
+import userRoute from "./routes/user.routes.js";
+import tweetRoute from "./routes/tweet.routes.js"
+
+//route decleration
+app.use("/api/v1/users", userRoute);
+app.use("/api/v1/tweet", tweetRoute);
+
 export { app };
