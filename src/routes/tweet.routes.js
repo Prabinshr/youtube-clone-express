@@ -11,7 +11,8 @@ import {
 
 const router = Router();
 
-router.route("/add-tweet").post(verifyJwt, createTweet);
+router.post("/add-tweet", verifyJwt, createTweet);
+// router.route("/add-tweet").post(verifyJwt, createTweet);
 router.route("/get-tweet").get(verifyJwt, getUserTweet);
 router.route("/get-all-tweet").get(getAllTweet);
 router.route("/:tweetId").patch(updateTweet).delete(deleteTweet);
