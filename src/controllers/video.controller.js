@@ -158,15 +158,22 @@ const getAllVideo = asyncHandler(async (req, res) => {
 
   const userId = req.user?._id;
 
-  const filter = {};
+  const filter = {isPublished:true};
 
   if (query) {
-    filter.title = { $regex: query, $options: "i" };
+    filter.$or = [
+      { title: { $regex: new RegExp(query, "i") } },
+      { description: { $regex: new RegExp(query, "i") } },
+    ];
+  }
+
+  if (title) {
+    filter.title = { $regex: new RegExp(title, "i") };
   }
 
   if (owner) {
     // Add the user ID filter if userId is provided
-    filter.owner = owner;
+    filter.owner = owner || userId;
   }
 
   const sort = {};
@@ -192,35 +199,35 @@ const getAllVideo = asyncHandler(async (req, res) => {
   //   .skip(skip)
   //   .exec();
 
-  const videoAggregationPipeline = Video.aggregate([
-    {
-      $match: {
-        $or: [
-          {
-            owner: new mongoose.Types.ObjectId(userId),
-          },
-          {
-            title: {
-              $regex: query.pattern,
-              $options: "i",
-            },
-          },
-          {
-            owner: {
-              $regex: query.pattern,
-              $options: "i",
-            },
-          },
-          {
-            isPublished:true
-          }
-        ],
-      },
-    },
-    {
-      $sort: sort,
-    },
-  ]);
+  // const videoAggregationPipeline = Video.aggregate([
+  //   {
+  //     $match: {
+  //       $or: [
+  //         {
+  //           owner: new mongoose.Types.ObjectId(userId),
+  //         },
+  //         {
+  //           title: {
+  //             $regex: query.pattern,
+  //             $options: "i",
+  //           },
+  //         },
+  //         {
+  //           owner: {
+  //             $regex: query.pattern,
+  //             $options: "i",
+  //           },
+  //         },
+  //         {
+  //           isPublished: true,
+  //         },
+  //       ],
+  //     },
+  //   },
+  //   {
+  //     $sort: sort,
+  //   },
+  // ]);
 
   // const videoAggregationPipeline = Video.aggregate([
   //   {
@@ -235,10 +242,16 @@ const getAllVideo = asyncHandler(async (req, res) => {
   //   { $match: { owner: new mongoose.Types.ObjectId(owner || userId) } },
   // ]);
 
-  const videos = await Video.aggregatePaginate(
-    videoAggregationPipeline,
-    options
-  );
+  // const videos = await Video.aggregatePaginate(
+  //   videoAggregationPipeline,
+  //   options
+  // );
+
+  //final query 
+  const videos = await Video.find(filter)
+    .sort(sort)
+    .skip(skip)
+    .limit(parseInt(limit));
 
   return res.status(200).json(new ApiResponse(200, videos, "Get User video"));
 });
