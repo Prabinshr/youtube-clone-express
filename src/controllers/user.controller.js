@@ -44,7 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (
     [fullName, username, email, password].some((field) => {
-      field?.trim() === "";
+      return field?.trim() === "";
     })
   ) {
     throw new ApiError(400, "All field are required");
@@ -362,6 +362,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         avatar: 1,
         email: 1,
         coverImage: 1,
+        isSubscribed: 1,
       },
     },
   ]);
@@ -380,7 +381,6 @@ const watchHistory = asyncHandler(async (req, res) => {
     {
       $match: {
         _id: new mongoose.Types.ObjectId(req.user._id),
-      
       },
     },
     {
