@@ -194,6 +194,7 @@ const getAllVideo = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   // const video = await Video.find({isPublished:true})
+
   //   .limit(parseInt(limit, 10))
   //   .sort(sort)
   //   .skip(skip)
@@ -248,6 +249,7 @@ const getAllVideo = asyncHandler(async (req, res) => {
   // );
 
   //final query 
+  
   const videos = await Video.find(filter)
     .sort(sort)
     .skip(skip)

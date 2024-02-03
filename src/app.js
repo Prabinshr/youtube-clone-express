@@ -25,6 +25,9 @@ app.use(
 app.use(express.static("public"));
 app.use(cookieParser());
 
+app.get("/",(req,res)=>{
+  res.send("Welcome To Youtube Clone")
+})
 // import router
 
 import userRoute from "./routes/user.routes.js";
